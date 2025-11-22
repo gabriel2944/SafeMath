@@ -29,7 +29,7 @@ export function createGamePane(mode, mainMenuCallback) {
 
     // background
     const bg = document.createElement('img');
-    bg.src = './images/backgroundLutas.png';
+    bg.src = '../backgroundLutas.png';
     bg.className = "gamestack-bg";
     root.appendChild(bg);
 
@@ -365,3 +365,4 @@ export function createGamePane(mode, mainMenuCallback) {
     return root;
 
 }
+
