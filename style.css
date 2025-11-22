@@ -1,0 +1,496 @@
+/* =========================
+   SafeMath2D - style.css
+   Versão: jogador bem à esquerda e mais para baixo; boxes acompanham
+   + ajuste: botões do menu movidos para baixo para deixar "SAFEMATH" visível
+   ========================= */
+
+/* Fonte local (woff2/woff preferencial, TTF como fallback) */
+@font-face {
+  font-family: "ArcadeCustom";
+  src: url("fonts/ARCADE_N.woff2") format("woff2"),
+       url("fonts/ARCADE_N.woff") format("woff"),
+       url("fonts/ARCADE_N.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Reset / base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Variáveis e fonte global */
+:root {
+  --ui-font: "ArcadeCustom", "Fira Mono", monospace;
+  --bg-color: #7fe6e6;
+  --accent-green: #62e674;
+  --ui-text: #0b3f2b;
+
+  /* O jogador foi movido bem mais para baixo (valor menor aproxima do rodapé) */
+  --ground-offset-player: 48px;  /* menor = jogador mais embaixo (mais próximo do rodapé) */
+  /* mantemos o boss ligeiramente mais alto para que não sobreponha o chão */
+  --ground-offset-boss: 132px;
+
+  /* Distância dos boxes em relação ao fundo (não usada diretamente, mantida por compatibilidade) */
+  --controls-bottom: 18px;
+
+  /* controles de largura/altura dos componentes */
+  --card-width: 96px;
+  --card-height: 76px;
+
+  /* Jogador agora bem mais à esquerda */
+  --player-left: 6px;
+
+  /* largura do container do jogador adaptado para 5 cards */
+  --player-box-width: calc(var(--card-width) * 5 + 64px);
+
+  /* largura máxima da linha de cards */
+  --controls-max-width: 760px;
+}
+
+/* Base do documento */
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg-color);
+  color: var(--ui-text);
+  font-family: var(--ui-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-size: 16px;
+  line-height: 1.1;
+}
+
+/* Forçar a fonte também em campos de formulário / botões / labels */
+input, button, select, textarea, label {
+  font-family: var(--ui-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: inherit;
+}
+
+/* Placeholder também */
+input::placeholder,
+textarea::placeholder {
+  font-family: var(--ui-font);
+  opacity: 0.8;
+}
+
+/* App wrapper */
+#app {
+  min-width: 800px;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Menu */
+.menu-container {
+  width: 800px;
+  height: 600px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* trocar centralização vertical por começo + padding-top para mostrar "SAFEMATH" */
+  justify-content: flex-start;
+  padding-top: 220px; /* desloca os botões para baixo mantendo o banner visível */
+
+  background: url('images/SafeMath.png') no-repeat center top;
+  background-size: cover;
+  box-shadow: 0 0 20px #0003;
+}
+
+.mode-btn {
+  margin: 16px 0;
+  padding: 14px 38px;
+  border-radius: 10px;
+  font-size: 1.2em;
+  background: green;
+  color: #fff;
+  border: none;
+  box-shadow: 2px 2px 0 #05381b8c;
+  transition: background 0.2s, transform 0.08s;
+  outline: none;
+  font-family: var(--ui-font);
+}
+.mode-btn:active { transform: translateY(1px); }
+.mode-btn:hover { background: #08b575; }
+
+
+.game-root {
+  width: 800px;
+  height: 600px;
+  position: relative; /* referência para posicionamento absoluto de player/boss/controls */
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  background: transparent;
+  z-index: 1;
+}
+
+/* Background */
+.gamestack-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.game-top {
+  position: relative;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 18px;
+  gap: 8px;
+}
+
+.question-panel { text-align: center; }
+.question-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--ui-text);
+  font-family: var(--ui-font);
+}
+.question-label {
+  font-size: 18px;
+  color: var(--ui-text);
+  margin-bottom: 8px;
+  font-family: var(--ui-font);
+}
+
+input[type="text"].answer-input {
+  padding: 8px 10px;
+  font-size: 16px;
+  border-radius: 14px;
+  border: 2.5px solid #00AAAA77;
+  background: #fff;
+  width: 180px;
+  text-align: center;
+  font-family: var(--ui-font);
+}
+.submit-btn {
+  margin-left: 8px;
+  padding: 7px 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  background: #3eb271;
+  color: #fff;
+  border: 0;
+  font-family: var(--ui-font);
+}
+
+/* Panels row (estrutura de fundo) */
+.game-panels {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  height: calc(100% - 140px);
+  padding: 12px 18px 20px 18px;
+  box-sizing: border-box;
+}
+
+
+.player-box {
+  position: absolute;
+  left: var(--player-left);
+  bottom: var(--ground-offset-player);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--player-box-width);
+  pointer-events: auto;
+  z-index: 60;
+}
+
+.player-figure {
+  position: relative;
+  width: 140px;
+  height: 96px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+.player-sprite {
+  position: absolute;
+  left: 8px;
+  bottom: 6px;
+  width: 64px;
+  height: 64px;
+  z-index: 62;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+/* Barra de vida do player */
+.player-box .progress-bar-container {
+  width: 120px;
+  height: 12px;
+  margin-top: 8px;
+  background: #1c1c1c22;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  z-index: 61;
+  border: 3px solid rgba(0,0,0,0.9);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+  pointer-events: none;
+}
+.player-box .progress-bar-container .progress-bar {
+  height: 100%;
+  background: var(--accent-green);
+  border-radius: 12px;
+  transition: width 0.3s linear;
+}
+
+/* animal posicionado à direita do jogador */
+.animal-overlay {
+  position: absolute;
+  left: 88px;
+  bottom: 8px;
+  width: 44px;
+  height: 44px;
+  z-index: 63;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+.boss-box {
+  position: absolute;
+  right: 64px;
+  bottom: var(--ground-offset-boss);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.boss-sprite {
+  width: 260px;
+  height: 180px;
+  object-fit: contain;
+  transform: none;
+  transition: transform 160ms ease;
+  image-rendering: pixelated;
+  position: relative;
+  z-index: 52;
+}
+
+/* Barra do boss */
+.progress-bar-container.boss-bar {
+  width: 220px;
+  height: 14px;
+  margin-top: 8px;
+  margin-bottom: 0;
+  position: relative;
+  z-index: 48;
+  background: #1c1c1c14;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 3px solid #000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+.progress-bar-container.boss-bar .progress-bar {
+  height: 100%;
+  background: var(--accent-green);
+  border-radius: 12px;
+  transition: width 0.3s linear;
+}
+
+/* A seleção de animals fica dentro do .player-box, logo abaixo da barra de vida
+   e acompanha o jogador  */
+.animal-selection {
+  position: relative;
+  margin-top: 18px; /* aumentado para afastar mais os cards do sprite e garantir visibilidade */
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between; /* distribui 5 cards pela largura do player-box */
+  width: 100%;
+  max-width: var(--player-box-width);
+  box-sizing: border-box;
+
+  flex-wrap: nowrap;
+  z-index: 59; /* abaixo da barra do player e sprite */
+  padding: 6px 8px;
+  pointer-events: auto;
+  background: transparent;
+  overflow: hidden;
+}
+
+/* se por qualquer razão houver overflow, dá scroll discreto */
+.animal-selection.scrollable {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* estilo de scrollbar  */
+.animal-selection::-webkit-scrollbar { height: 8px; }
+.animal-selection::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 8px; }
+.animal-selection::-webkit-scrollbar-track { background: transparent; }
+
+/* tamanho padrão e consistente dos cards */
+.animal-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ffffffee;
+  border-radius: 8px;
+  border: 2px solid #00000022;
+
+  width: var(--card-width);
+  min-width: var(--card-width);
+  height: var(--card-height);
+  min-height: var(--card-height);
+
+  padding: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.08s, box-shadow 0.12s;
+  font-family: var(--ui-font);
+  pointer-events: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-sizing: border-box;
+
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+.animal-card img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex: 0 0 auto;
+}
+
+/* texto do nome do animal */
+.animal-card .name {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ui-text);
+}
+
+/* estado visual */
+.animal-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.18); }
+.animal-card.selected { border-color: #3b82f6; box-shadow: 0 0 0 4px #3b82f688; }
+.animal-card.locked { opacity: 0.7; pointer-events: none; }
+.animal-card .badge {
+  position: absolute; top: 6px; right: 8px;
+  background: #ff6b6b; color: #fff;
+  font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 10px;
+}
+
+/* pausa */
+.pause-btn {
+  background: #fff; border-radius: 50%; border: none;
+  width: 41px; height: 41px; position: absolute; left: 18px; top: 14px; z-index: 90;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+  pointer-events: auto;
+}
+.pause-btn img { width: 26px; height: 26px; }
+
+/* pausa overlay */
+.bg-pause-overlay {
+  background: rgba(78, 184, 184, 0.93);
+  position: absolute;
+  inset: 0; display: flex;
+  align-items: center; justify-content: center;
+  z-index: 99;
+}
+.pause-panel {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.98), #e6fbff);
+  border: 4px solid #0b3f2b;
+  border-radius: 10px;
+  padding: 24px 34px;
+  text-align: center;
+}
+.pause-panel button { margin-top: 12px; padding: 10px 14px; font-family: var(--ui-font); }
+
+/* center message */
+.center-message {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 85; pointer-events: none;
+}
+.center-message .msg {
+  background: rgba(0,0,0,0.82);
+  color: #fff; border-radius: 12px;
+  font-size: 16px; padding: 20px 26px; font-weight: bold;
+  box-shadow: 0 12px 38px rgba(0,0,0,0.35);
+  font-family: var(--ui-font);
+}
+
+/* damage label */
+.damage-label {
+  font-size: 14px; color: #f83f36; font-weight: bold;
+  opacity: 1; transition: opacity 0.8s ease; pointer-events: none;
+  font-family: var(--ui-font);
+}
+.damage-label.hidden { opacity: 0; }
+
+/* accessibilidade: outline de foco */
+button:focus, .animal-card:focus, input:focus {
+  outline: 3px solid rgba(59,130,246,0.35);
+  outline-offset: 2px;
+}
+
+/* responsividade */
+@media (max-width: 820px) {
+  :root {
+    --ground-offset-player: 40px;
+    --ground-offset-boss: 110px;
+    --controls-bottom: 14px;
+    --card-width: 84px;
+    --card-height: 68px;
+    --player-left: 6px;
+    --player-box-width: calc(var(--card-width) * 5 + 48px);
+    --controls-max-width: calc(100% - 48px);
+  }
+
+  /* reduzir o padding-top do menu em telas menores para evitar overflow */
+  .menu-container { padding-top: 120px; }
+
+  .game-root { transform: scale(0.95); transform-origin: top left; }
+  .player-box {
+    left: var(--player-left);
+    bottom: var(--ground-offset-player);
+    width: var(--player-box-width);
+    transform-origin: left bottom;
+  }
+  .player-figure { transform: scale(0.95); }
+  .boss-box {
+    right: 40px;
+    bottom: var(--ground-offset-boss);
+  }
+  .boss-sprite { width: 200px; height: 140px; z-index: 52; }
+  .progress-bar-container.boss-bar { width: 180px; z-index: 48; }
+
+  .animal-selection { gap: 6px; margin-top: 12px; overflow: hidden; }
+  .animal-selection.scrollable { overflow-x: auto; }
+}
